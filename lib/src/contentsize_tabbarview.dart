@@ -7,12 +7,16 @@ class ContentSizeTabBarView extends StatefulWidget {
   ///
   /// The length of [children] must be the same as the [controller]'s length.
   const ContentSizeTabBarView({
-    Key? key,
+    super.key,
     required this.children,
     this.controller,
     this.physics,
     this.dragStartBehavior = DragStartBehavior.start,
-  }) : super(key: key);
+    this.animationDuration = const Duration(milliseconds: 100),
+    this.animationCurve = Curves.easeInOutCubic,
+    this.estimatedPageSize = 0.0,
+    this.animateFirstPage = false,
+  });
 
   /// This widget's selection and animation state.
   ///
@@ -39,6 +43,20 @@ class ContentSizeTabBarView extends StatefulWidget {
 
   /// {@macro flutter.widgets.scrollable.dragStartBehavior}
   final DragStartBehavior dragStartBehavior;
+
+  /// The duration of the animation when the page view is scrolled.
+  final Duration animationDuration;
+
+  /// The curve of the animation when the page view is scrolled.
+  final Curve animationCurve;
+
+  /// The estimated size of the pages in the page view.
+  /// This is used to optimize the layout of the page view.
+  final double estimatedPageSize;
+
+  /// Whether to animate the first page when the page view is first built.
+  /// By default, this is false.
+  final bool animateFirstPage;
 
   @override
   State<ContentSizeTabBarView> createState() => _ContentSizeTabBarViewState();
@@ -211,7 +229,11 @@ class _ContentSizeTabBarViewState extends State<ContentSizeTabBarView> {
       onNotification: _handleScrollNotification,
       child: ExpandablePageView(
         dragStartBehavior: widget.dragStartBehavior,
+        animationDuration: widget.animationDuration,
+        animationCurve: widget.animationCurve,
+        estimatedPageSize: widget.estimatedPageSize,
         controller: _pageController,
+        animateFirstPage: widget.animateFirstPage,
         physics: widget.physics == null
             ? const PageScrollPhysics().applyTo(const ClampingScrollPhysics())
             : const PageScrollPhysics().applyTo(widget.physics),
